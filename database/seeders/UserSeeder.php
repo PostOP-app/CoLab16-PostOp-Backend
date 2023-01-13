@@ -18,21 +18,21 @@ class UserSeeder extends Seeder
         $admin = User::create([
             'first_name' => 'PostCare',
             'last_name' => 'Admin',
-            'email' => 'admin@web3.com',
+            'email' => 'admin@postcare.com',
             'password' => Hash::make('password'),
         ]);
 
         $patient = User::create([
             'first_name' => 'PostCare',
             'last_name' => 'Patient',
-            'email' => 'patient@web3.com',
+            'email' => 'patient@postcare.com',
             'password' => Hash::make('password'),
         ]);
 
         $provider = User::create([
             'first_name' => 'PostCare',
             'last_name' => 'Provider',
-            'email' => 'provider@web3.com',
+            'email' => 'provider@postcare.com',
             'password' => Hash::make('password'),
         ]);
 
