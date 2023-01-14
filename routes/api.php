@@ -13,6 +13,12 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
+Route::post('/register', [App\Http\Controllers\Patients\AuthController::class, 'register']);
+Route::post('/login', [App\Http\Controllers\Patients\AuthController::class, 'login']);
+
 Route::prefix('admin')->group(function () {
     Route::post('/login', [App\Http\Controllers\Admin\AuthController::class, 'login']);
+    Route::middleware('auth:api')->get('/user', function () {
+
+    });
 });
