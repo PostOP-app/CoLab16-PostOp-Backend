@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Todo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class TodoController extends Controller
