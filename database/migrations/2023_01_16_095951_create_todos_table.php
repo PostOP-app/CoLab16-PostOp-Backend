@@ -18,9 +18,9 @@ return new class extends Migration
             $table->string('title')->unique();
             $table->text('description');
             $table->boolean('completed')->default(false);
-            $table->string('status');
+            $table->string('status')->default('pending');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->timestamp('due_date');
+            $table->dateTime('due_date', $precision = 0);
             $table->timestamps();
         });
     }

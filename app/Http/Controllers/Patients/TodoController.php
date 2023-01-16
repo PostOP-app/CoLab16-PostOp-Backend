@@ -55,12 +55,12 @@ class TodoController extends Controller
      */
     public function validator(Request $request)
     {
-        $status = ['pending', 'completed', 'in-progress'];
+        // $status = ['pending', 'completed', 'in-progress'];
 
         return Validator::make($request->all(), [
             'title' => 'required|unique|string|max:255',
             'description' => 'required|string|max:255',
-            'status' => 'required' . Rule::in($status),
+            // 'status' => 'required' . Rule::in($status),
             'user_id' => 'required|integer|exists:users,id',
             'due_date' => 'required|date',
             'completed' => 'boolean',
@@ -78,8 +78,8 @@ class TodoController extends Controller
         $todo->title = $request->title;
         $todo->description = $request->description;
         $todo->completed = $request->completed;
-        $todo->status = $request->status;
-        $todo->user_id = $request->user_id;
+        // $todo->status = "$request->status";
+        $todo->user_id = auth()->user()->id;
         $todo->due_date = $request->due_date;
 
         $todo->save();
