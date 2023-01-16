@@ -18,7 +18,7 @@ class TodoController extends Controller
      */
     public function index()
     {
-        $todos = Todo::latest()->paginate(15);
+        $todos = Todo::where('user_id', auth()->user()->id)->latest()->paginate(15);
         return $todos;
     }
 
@@ -94,13 +94,49 @@ class TodoController extends Controller
      */
     public function update(Request $request, Todo $todo)
     {
-
         if ($request->title) {
             $request->validate([
                 'title' => 'required|unique:todos,title|string|max:255',
             ]);
 
+            $todo->title = $request->title;
         }
+
+        if ($request->description) {
+            $request->validate([
+                'description' => 'required|string|max:255',
+            ]);
+
+            $todo->description = $request->description;
+        }
+
+        if ($request->due_date) {
+            $request->validate([
+                'due_date' => 'required|date',
+            ]);
+
+            $todo->due_date = $request->due_date;
+        }
+
+        if ($request->status) {
+            $request->validate([
+                'status' => 'required|string|max:255',
+            ]);
+
+            $todo->status = $request->status;
+
+            if ($request->status == 'completed') {
+                $todo->completed = true;
+            }
+        }
+
+        $todo->save();
+
+        return response([
+            'status' => true,
+            'message' => 'Todo updated successfully',
+            'data' => $todo,
+        ], 200);
     }
 
 }

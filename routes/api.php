@@ -25,5 +25,6 @@ Route::prefix('patients')->group(function () {
     Route::group(['middleware' => ['auth:api', 'role:Patients']], function () {
         Route::get('/todos', [App\Http\Controllers\Patients\TodoController::class, 'index']);
         Route::post('/todos/create', [App\Http\Controllers\Patients\TodoController::class, 'create']);
+        Route::put('/todos/{todo}/update', [App\Http\Controllers\Patients\TodoController::class, 'update']);
     });
 });
