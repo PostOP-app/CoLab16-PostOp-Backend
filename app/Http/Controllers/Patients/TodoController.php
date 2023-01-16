@@ -22,7 +22,7 @@ class TodoController extends Controller
     }
 
     /**
-     * Create a new resource.
+     * Create a new todo.
      *
      * @return \Illuminate\Http\Response
      */
@@ -47,7 +47,7 @@ class TodoController extends Controller
     }
 
     /**
-     * Tag data validator
+     * Todo data validator
      * @param Request $request
      * @param array $customRules
      *
@@ -58,12 +58,12 @@ class TodoController extends Controller
         // $status = ['pending', 'completed', 'in-progress'];
 
         return Validator::make($request->all(), [
-            'title' => 'required|unique|string|max:255',
+            'title' => 'required|unique:todos,title|string|max:255',
             'description' => 'required|string|max:255',
             // 'status' => 'required' . Rule::in($status),
-            'user_id' => 'required|integer|exists:users,id',
+            // 'user_id' => 'required|integer|exists:users,id',
             'due_date' => 'required|date',
-            'completed' => 'boolean',
+            // 'completed' => 'boolean',
         ]);
     }
 
@@ -76,12 +76,30 @@ class TodoController extends Controller
     public function store($request, $todo)
     {
         $todo->title = $request->title;
+        $todo->slug = Str::slug($request->title);
         $todo->description = $request->description;
-        $todo->completed = $request->completed;
+        // $todo->completed = $request->completed;
         // $todo->status = "$request->status";
         $todo->user_id = auth()->user()->id;
         $todo->due_date = $request->due_date;
 
         $todo->save();
     }
+
+    /**
+     * Update a todo.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Todo $todo)
+    {
+
+        if ($request->title) {
+            $request->validate([
+                'title' => 'required|unique:todos,title|string|max:255',
+            ]);
+
+        }
+    }
+
 }

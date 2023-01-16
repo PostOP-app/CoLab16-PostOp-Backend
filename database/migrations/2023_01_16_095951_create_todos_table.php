@@ -16,11 +16,13 @@ return new class extends Migration
         Schema::create('todos', function (Blueprint $table) {
             $table->id();
             $table->string('title')->unique();
+            $table->string('slug')->unique();
             $table->text('description');
             $table->boolean('completed')->default(false);
             $table->string('status')->default('pending');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->dateTime('due_date', $precision = 0);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
