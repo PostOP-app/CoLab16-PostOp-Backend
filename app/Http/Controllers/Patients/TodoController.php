@@ -77,7 +77,7 @@ class TodoController extends Controller
     public function store($request, $todo)
     {
         $todo->title = $request->title;
-        $todo->slug = Str::slug($request->title);
+        $todo->slug = Str::slug($request->title . '-' . time());
         $todo->description = $request->description;
         // $todo->completed = $request->completed;
         // $todo->status = "$request->status";
@@ -100,6 +100,7 @@ class TodoController extends Controller
             ]);
 
             $todo->title = $request->title;
+            $todo->slug = Str::slug($request->title);
         }
 
         if ($request->description) {
@@ -139,4 +140,37 @@ class TodoController extends Controller
         ], 200);
     }
 
+    /**
+     * Update a todo's status.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function updateStatus(Request $request, Todo $todo)
+    {
+        $todo->status = 'completed';
+        $todo->completed = true;
+        $todo->save();
+
+        return response([
+            'status' => true,
+            'message' => 'Todo completed successfully',
+            'data' => $todo,
+        ], 200);
+    }
+
+    /**
+     * Delete a todo.
+     *
+     * @param  \App\Models\Todo  $todo
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Todo $todo)
+    {
+        $todo->delete();
+
+        return response([
+            'status' => true,
+            'message' => 'Todo deleted successfully',
+        ], 200);
+    }
 }
