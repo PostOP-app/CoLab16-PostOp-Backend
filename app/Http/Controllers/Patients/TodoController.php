@@ -145,7 +145,7 @@ class TodoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function updateStatus(Request $request, Todo $todo)
+    public function updateStatus(Todo $todo)
     {
         $todo->status = 'completed';
         $todo->completed = true;
@@ -159,14 +159,48 @@ class TodoController extends Controller
     }
 
     /**
-     * Delete a todo.
+     * Archive a todo.
      *
      * @param  \App\Models\Todo  $todo
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Todo $todo)
+    public function archive(Todo $todo)
     {
         $todo->delete();
+
+        return response([
+            'status' => true,
+            'message' => 'Todo archived successfully',
+        ], 200);
+    }
+
+    /**
+     * Restore a todo.
+     *
+     * @param  \App\Models\Todo  $todo
+     * @return \Illuminate\Http\Response
+     */
+    public function restore($slug)
+    {
+        $todo = Todo::withTrashed()->where('slug', $slug)->first();
+        $todo->restore();
+
+        return response([
+            'status' => true,
+            'message' => 'Todo restored successfully',
+        ], 200);
+    }
+
+    /**
+     * Forcefully delete a todo.
+     *
+     * @param  \App\Models\Todo  $todo
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($slug)
+    {
+        $todo = Todo::withTrashed()->where('slug', $slug)->first();
+        $todo->forceDelete();
 
         return response([
             'status' => true,

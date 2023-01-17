@@ -27,6 +27,9 @@ Route::prefix('patients')->group(function () {
         Route::post('/todos/create', [App\Http\Controllers\Patients\TodoController::class, 'create']);
         Route::put('/todos/{todo}/update', [App\Http\Controllers\Patients\TodoController::class, 'update']);
         Route::patch('/todos/{todo}/complete', [App\Http\Controllers\Patients\TodoController::class, 'updateStatus']);
-        Route::delete('/todos/{todo}/delete', [App\Http\Controllers\Patients\TodoController::class, 'destroy']);
+        Route::put('/todos/{todo}/archive', [App\Http\Controllers\Patients\TodoController::class, 'archive']);
+        Route::put('/todos/{slug}/restore', [App\Http\Controllers\Patients\TodoController::class, 'restore']);
+        Route::delete('/todos/{slug}/delete', [App\Http\Controllers\Patients\TodoController::class, 'destroy']);
+
     });
 });
