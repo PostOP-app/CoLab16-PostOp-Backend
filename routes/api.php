@@ -33,3 +33,7 @@ Route::prefix('patients')->group(function () {
 
     });
 });
+
+Route::prefix('providers')->group(function () {
+    Route::post('/login', [App\Http\Controllers\Providers\AuthController::class, 'login']);
+});
