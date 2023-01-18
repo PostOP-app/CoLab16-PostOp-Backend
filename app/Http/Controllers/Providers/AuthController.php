@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Patients;
+namespace App\Http\Controllers\Providers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -11,12 +11,12 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-/**
- * Process patient's registration action
- * @param Request $request - Request object
- *
- * @return Response
- */
+    /**
+     * Process provider's registration action
+     * @param Request $request - Request object
+     *
+     * @return Response
+     */
     public function register(Request $request)
     {
         $validate = $this->validator($request);
@@ -27,25 +27,25 @@ class AuthController extends Controller
             ], 400);
         }
 
-        $patient = new User();
-        $this->store($request, $patient);
+        $provider = new User();
+        $this->store($request, $provider);
 
-        $patient->assignRole('Patients');
+        $provider->assignRole('Providers');
 
         return response([
             'status' => true,
-            'message' => 'Patient registered successfully',
-            'data' => $patient,
+            'message' => 'Provider registered successfully',
+            'data' => $provider,
         ], 201);
     }
 
-    /**
-     * User data validator
-     * @param Request $request
-     * @param array $customRules
-     *
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
+/**
+ * User data validator
+ * @param Request $request
+ * @param array $customRules
+ *
+ * @return \Illuminate\Contracts\Validation\Validator
+ */
     public function validator(Request $request)
     {
         return Validator::make($request->all(), [
@@ -62,22 +62,22 @@ class AuthController extends Controller
  * @param  \Illuminate\Http\Request  $request
  * @return \Illuminate\Http\Response
  */
-    public function store($request, $patient)
+    public function store($request, $provider)
     {
-        $patient->first_name = ucfirst($request->first_name);
-        $patient->last_name = ucfirst($request->last_name);
-        $patient->email = $request->email;
-        $patient->password = Hash::make($request->password);
+        $provider->first_name = ucfirst($request->first_name);
+        $provider->last_name = ucfirst($request->last_name);
+        $provider->email = $request->email;
+        $provider->password = Hash::make($request->password);
 
-        $patient->save();
+        $provider->save();
     }
 
-    /**
-     * Process login action
-     * @param Request $request - Request object
-     *
-     * @return Response
-     */
+/**
+ * Process login action
+ * @param Request $request - Request object
+ *
+ * @return Response
+ */
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -100,20 +100,20 @@ class AuthController extends Controller
         $email = $request->email;
         $password = $request->password;
 
-        $patient = User::where('email', $email)->first();
+        $provider = User::where('email', $email)->first();
 
-        if (!$patient) {
+        if (!$provider) {
             return response()->json($invalidCredentialsResponse, 401);
         }
 
-        if (!Hash::check($password, $patient->password)) {
+        if (!Hash::check($password, $provider->password)) {
             return response()->json($invalidCredentialsResponse, 401);
         }
 
-        $token = $patient->createToken('Patient Token');
+        $token = $provider->createToken('Provider Token');
 
         $data = [
-            'patient' => $patient,
+            'provider' => $provider,
             'token' => $token->accessToken,
             'token_type' => 'Bearer',
             'token_expires' => Carbon::parse(
@@ -127,4 +127,5 @@ class AuthController extends Controller
             'data' => $data,
         ], 200);
     }
+
 }
