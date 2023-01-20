@@ -41,6 +41,10 @@ Route::prefix('providers')->group(function () {
 
 });
 
-Route::group(['middleware' => ['auth:api', 'role:Providers, Patients']], function () {
-    Route::post('{id}/send', [App\Http\Controllers\Messages\MessageController::class, 'sendMessage']);
+Route::prefix('messages')->group(function () {
+    Route::group(['middleware' => ['auth:api'], ['role:Patients,Providers']], function () {
+        Route::post('{id}/send', [App\Http\Controllers\Shared\MessageController::class, 'sendMessage']);
+        Route::get('{id}/fetch', [App\Http\Controllers\Shared\MessageController::class, 'fetchMessages']);
+        Route::get('unread', [App\Http\Controllers\Shared\MessageController::class, 'getUnreadMessages']);
+    });
 });
