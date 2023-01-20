@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->text('text');
             $table->string('photo')->nullable();
+            $table->enum('from', ['patient', 'provider']);
+            $table->enum('to', ['provider', 'patient']);
             $table->foreignId('from_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('to_id')->constrained('users')->onDelete('cascade');
             $table->boolean('read')->default(false);

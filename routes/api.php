@@ -15,10 +15,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [App\Http\Controllers\Patients\AuthController::class, 'register']);
 Route::post('/login', [App\Http\Controllers\Patients\AuthController::class, 'login']);
+Route::post('/logout', [App\Http\Controllers\Patients\AuthController::class, 'logout']);
 
 Route::prefix('admin')->group(function () {
     Route::post('/login', [App\Http\Controllers\Admin\AuthController::class, 'login']);
-
+    Route::post('/logout', [App\Http\Controllers\Admin\AuthController::class, 'logout']);
 });
 
 Route::prefix('patients')->group(function () {
@@ -41,5 +42,5 @@ Route::prefix('providers')->group(function () {
 });
 
 Route::group(['middleware' => ['auth:api', 'role:Providers, Patients']], function () {
-
+    Route::post('{id}/send', [App\Http\Controllers\Messages\MessageController::class, 'sendMessage']);
 });
