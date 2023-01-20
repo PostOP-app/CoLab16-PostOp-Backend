@@ -43,6 +43,7 @@ Route::prefix('providers')->group(function () {
 
 Route::prefix('messages')->group(function () {
     Route::group(['middleware' => ['auth:api']], function () {
+        Route::get('/', [App\Http\Controllers\Shared\MessageController::class, 'getAllMessages']);
         Route::post('{id}/send', [App\Http\Controllers\Shared\MessageController::class, 'sendMessage']);
         Route::get('{id}/fetch', [App\Http\Controllers\Shared\MessageController::class, 'fetchMessages']);
         Route::get('unread', [App\Http\Controllers\Shared\MessageController::class, 'getUnreadMessages']);

@@ -172,4 +172,19 @@ class MessageController extends Controller
             'message' => 'Message deleted',
         ], 200);
     }
+
+    /**
+     * get all messages
+     *
+     * @param Request $request
+     */
+    public function getAllMessages()
+    {
+        $messages = Message::where('from_id', auth()->user()->id)->orwhere('to_id', auth()->user()->id)->get();
+
+        return response()->json([
+            'status' => true,
+            'messages' => $messages,
+        ], 200);
+    }
 }
