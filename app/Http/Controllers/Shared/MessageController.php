@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Validator;
 
 class MessageController extends Controller
 {
+    public function __construct()
+    {
+        $roles = ['Patients', 'Providers'];
+        $this->middleware('role:' . implode('|', $roles));
+    }
+
     public function fetchMessages($id)
     {
         // $unreadMsgs = Message::select(DB::raw('`from_id` as sender_id, count(`from_id`) as messages_count'))->where('to_id', $id)->where('read', false)->groupBy('from_id')->get();
@@ -93,11 +99,77 @@ class MessageController extends Controller
      */
     public function getUnreadMessages()
     {
+        // $unreadMsgs = Message::select(DB::raw('`from_id` as sender_id, count(`from_id`) as messages_count,'))->where('to_id', auth()->user()->id)->where('read', false)->groupBy('from_id')->get();
+
         $unreadMsgs = Message::where('to_id', auth()->user()->id)->where('read', false)->get();
+        $unreadMsgsCount = $unreadMsgs->count();
 
         return response()->json([
             'status' => true,
             'unreadMsgs' => $unreadMsgs,
+            'unreadMsgsCount' => $unreadMsgsCount,
+        ], 200);
+    }
+
+    /**
+     * mark message as read
+     *
+     * @param Request $request
+     */
+    public function markMessageAsRead($id)
+    {
+        $message = Message::find($id);
+        if (!$message) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Message not found',
+            ], 400);
+        }
+
+        if ($message->to_id !== auth()->user()->id) {
+            return response()->json([
+                'status' => false,
+                'message' => 'You can not mark this message as read',
+            ], 400);
+
+        }
+
+        $message->read = true;
+        $message->save();
+        return response()->json([
+            'status' => true,
+            'message' => 'Message marked as read',
+        ], 200);
+    }
+
+    /**
+     * delete message
+     *
+     * @param Request $request
+     */
+    public function deleteMessage($id)
+    {
+        $message = Message::find($id);
+        if (!$message) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Message not found',
+            ], 400);
+        }
+
+        if ($message->to_id !== auth()->user()->id) {
+            return response()->json([
+                'status' => false,
+                'message' => 'You can not delete this message',
+            ], 400);
+
+        }
+
+        $message->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Message deleted',
         ], 200);
     }
 }

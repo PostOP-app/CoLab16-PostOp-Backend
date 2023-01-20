@@ -42,9 +42,11 @@ Route::prefix('providers')->group(function () {
 });
 
 Route::prefix('messages')->group(function () {
-    Route::group(['middleware' => ['auth:api'], ['role:Patients,Providers']], function () {
+    Route::group(['middleware' => ['auth:api']], function () {
         Route::post('{id}/send', [App\Http\Controllers\Shared\MessageController::class, 'sendMessage']);
         Route::get('{id}/fetch', [App\Http\Controllers\Shared\MessageController::class, 'fetchMessages']);
         Route::get('unread', [App\Http\Controllers\Shared\MessageController::class, 'getUnreadMessages']);
+        Route::patch('/{id}/mark-as-read', [App\Http\Controllers\Shared\MessageController::class, 'markMessageAsRead']);
+        Route::delete('/{id}/delete', [App\Http\Controllers\Shared\MessageController::class, 'deleteMessage']);
     });
 });
