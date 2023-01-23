@@ -33,6 +33,20 @@ class TodoController extends Controller
     }
 
     /**
+     * fetch a patient's todos.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function fetchPatientTodos()
+    {
+        $todos = Todo::where('patient_id', auth()->user()->id)->latest()->paginate(15);
+        return response([
+            'status' => true,
+            'data' => $todos,
+        ]);
+    }
+
+    /**
      * Create a new todo.
      *
      * @return \Illuminate\Http\Response
@@ -156,7 +170,7 @@ class TodoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function updateStatus(Todo $todo)
+    public function completeTodo(Todo $todo)
     {
         $todo->status = 'completed';
         $todo->completed = true;
