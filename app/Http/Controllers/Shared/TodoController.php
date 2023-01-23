@@ -11,6 +11,16 @@ use Illuminate\Validation\Rule;
 
 class TodoController extends Controller
 {
+
+    /**
+     * setup middleware
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('verify_patient_id')->only(['create', 'update']);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -34,13 +44,6 @@ class TodoController extends Controller
             return response([
                 'status' => false,
                 'errors' => $validateTodo->errors()->messages(),
-            ], 400);
-        }
-
-        if ($request->patient_id == auth()->user()->id) {
-            return response([
-                'status' => false,
-                'errors' => 'Patient ID is invalid. Check and try again',
             ], 400);
         }
 
