@@ -37,6 +37,13 @@ class TodoController extends Controller
             ], 400);
         }
 
+        if ($request->patient_id == auth()->user()->id) {
+            return response([
+                'status' => false,
+                'errors' => 'Patient ID is invalid. Check and try again',
+            ], 400);
+        }
+
         $todo = new Todo();
         $this->store($request, $todo);
 
@@ -62,7 +69,7 @@ class TodoController extends Controller
             'title' => 'required|unique:todos,title|string|max:255',
             'description' => 'required|string|max:255',
             // 'status' => 'required' . Rule::in($status),
-            // 'user_id' => 'required|integer|exists:users,id',
+            'patient_id' => 'required|integer|exists:users,id',
             'due_date' => 'required|date',
             // 'completed' => 'boolean',
         ]);
@@ -81,7 +88,8 @@ class TodoController extends Controller
         $todo->description = $request->description;
         // $todo->completed = $request->completed;
         // $todo->status = "$request->status";
-        $todo->user_id = auth()->user()->id;
+        $todo->provider_id = auth()->user()->id;
+        $todo->patient_id = $request->patient_id;
         $todo->due_date = $request->due_date;
 
         $todo->save();
