@@ -24,14 +24,18 @@ Route::prefix('admin')->group(function () {
 
 Route::prefix('patients')->group(function () {
     Route::group(['middleware' => ['auth:api', 'role:Patients']], function () {
-        Route::get('/todos', [App\Http\Controllers\Patients\TodoController::class, 'index']);
-        Route::post('/todos/create', [App\Http\Controllers\Patients\TodoController::class, 'create']);
-        Route::put('/todos/{todo}/update', [App\Http\Controllers\Patients\TodoController::class, 'update']);
-        Route::patch('/todos/{todo}/complete', [App\Http\Controllers\Patients\TodoController::class, 'updateStatus']);
-        Route::put('/todos/{todo}/archive', [App\Http\Controllers\Patients\TodoController::class, 'archive']);
-        Route::put('/todos/{slug}/restore', [App\Http\Controllers\Patients\TodoController::class, 'restore']);
-        Route::delete('/todos/{slug}/delete', [App\Http\Controllers\Patients\TodoController::class, 'destroy']);
+        Route::patch('/todos/{todo}/complete', [App\Http\Controllers\Shared\TodoController::class, 'updateStatus']);
+        Route::put('/todos/{todo}/archive', [App\Http\Controllers\Shared\TodoController::class, 'archive']);
+        Route::put('/todos/{slug}/restore', [App\Http\Controllers\Shared\TodoController::class, 'restore']);
+        Route::delete('/todos/{slug}/delete', [App\Http\Controllers\Shared\TodoController::class, 'destroy']);
 
+    });
+});
+
+Route::prefix('todos')->group(function () {
+    $roles = ['Patients', 'Providers'];
+    Route::group(['middleware' => ['auth:api', 'role:' . implode('|', $roles)]], function () {
+        Route::get('', [App\Http\Controllers\Shared\TodoController::class, 'index']);
     });
 });
 
@@ -39,6 +43,10 @@ Route::prefix('providers')->group(function () {
     // Route::post('/register', [App\Http\Controllers\Providers\AuthController::class, 'register']);
     Route::post('/login', [App\Http\Controllers\Providers\AuthController::class, 'login']);
 
+    Route::group(['middleware' => ['auth:api', 'role:Patients']], function () {
+        Route::post('/todos/create', [App\Http\Controllers\Shared\TodoController::class, 'create']);
+        Route::put('/todos/{todo}/update', [App\Http\Controllers\Shared\TodoController::class, 'update']);
+    });
 });
 
 Route::prefix('messages')->group(function () {
