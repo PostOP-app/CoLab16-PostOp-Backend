@@ -29,15 +29,15 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
         ]);
 
-        $provider = User::create([
+        $med_provider = User::create([
             'first_name' => 'PostCare',
             'last_name' => 'Provider',
             'email' => 'provider@postcare.com',
             'password' => Hash::make('password'),
         ]);
 
-        $admin->assignRole('Admin');
-        $patient->assignRole('Patients');
-        $provider->assignRole('Providers');
+        $admin->assignRole('admin');
+        $patient->assignRole('patient');
+        $med_provider->assignRole('med_provider');
     }
 }

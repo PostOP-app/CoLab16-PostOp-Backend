@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Patients;
+namespace App\Http\Controllers\patient;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -30,7 +30,7 @@ class AuthController extends Controller
         $patient = new User();
         $this->store($request, $patient);
 
-        $patient->assignRole('Patients');
+        $patient->assignRole('patient');
 
         return response([
             'status' => true,

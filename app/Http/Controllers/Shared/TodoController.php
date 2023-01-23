@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Shared;
 
 use App\Http\Controllers\Controller;
 use App\Models\Todo;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -30,6 +31,21 @@ class TodoController extends Controller
     {
         $todos = Todo::where('user_id', auth()->user()->id)->latest()->paginate(15);
         return $todos;
+    }
+
+    /**
+     * fetch a patient.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function fetchPatient()
+    {
+        dd(auth()->user()->roles[0]->name);
+        $patient = User::where('roles', 'patient')->latest()->paginate(15);
+        return response([
+            'status' => true,
+            'data' => $patient,
+        ]);
     }
 
     /**
@@ -105,7 +121,7 @@ class TodoController extends Controller
         $todo->description = $request->description;
         // $todo->completed = $request->completed;
         // $todo->status = "$request->status";
-        $todo->provider_id = auth()->user()->id;
+        $todo->med_provider_id = auth()->user()->id;
         $todo->patient_id = $request->patient_id;
         $todo->due_date = $request->due_date;
 
