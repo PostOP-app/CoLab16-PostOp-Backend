@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Spatie\Permission\Models\Role;
 
 class TodoController extends Controller
 {
@@ -38,13 +39,13 @@ class TodoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function fetchPatient()
+    public function fetchPatients()
     {
-        dd(auth()->user()->roles[0]->name);
-        $patient = User::where('roles', 'patient')->latest()->paginate(15);
+        // fetch all patients
+        $patients = Role::where('name', 'patient')->first()->users()->latest()->paginate(15);
         return response([
             'status' => true,
-            'data' => $patient,
+            'data' => $patients,
         ]);
     }
 

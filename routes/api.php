@@ -43,7 +43,7 @@ Route::prefix('med_provider')->group(function () {
     Route::post('/login', [App\Http\Controllers\MedProviders\AuthController::class, 'login']);
 
     Route::group(['middleware' => ['auth:api', 'role:med_provider']], function () {
-        Route::get('/all-patient', [App\Http\Controllers\Shared\TodoController::class, 'fetchPatient']);
+        Route::get('/all-patients', [App\Http\Controllers\Shared\TodoController::class, 'fetchPatients']);
         Route::get('/todos', [App\Http\Controllers\Shared\TodoController::class, 'index']);
         Route::post('/todos/create', [App\Http\Controllers\Shared\TodoController::class, 'create']);
         Route::put('/todos/{todo}/update', [App\Http\Controllers\Shared\TodoController::class, 'update']);
