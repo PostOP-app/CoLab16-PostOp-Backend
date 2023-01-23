@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Providers;
+namespace App\Http\Controllers\MedProviders;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Validator;
 class AuthController extends Controller
 {
     /**
-     * Process provider's registration action
+     * Process med_provider's registration action
      * @param Request $request - Request object
      *
      * @return Response
@@ -27,15 +27,15 @@ class AuthController extends Controller
             ], 400);
         }
 
-        $provider = new User();
-        $this->store($request, $provider);
+        $med_provider = new User();
+        $this->store($request, $med_provider);
 
-        $provider->assignRole('Providers');
+        $med_provider->assignRole('med_provider');
 
         return response([
             'status' => true,
-            'message' => 'Provider registered successfully',
-            'data' => $provider,
+            'message' => 'med_provider registered successfully',
+            'data' => $med_provider,
         ], 201);
     }
 
@@ -62,14 +62,14 @@ class AuthController extends Controller
  * @param  \Illuminate\Http\Request  $request
  * @return \Illuminate\Http\Response
  */
-    public function store($request, $provider)
+    public function store($request, $med_provider)
     {
-        $provider->first_name = ucfirst($request->first_name);
-        $provider->last_name = ucfirst($request->last_name);
-        $provider->email = $request->email;
-        $provider->password = Hash::make($request->password);
+        $med_provider->first_name = ucfirst($request->first_name);
+        $med_provider->last_name = ucfirst($request->last_name);
+        $med_provider->email = $request->email;
+        $med_provider->password = Hash::make($request->password);
 
-        $provider->save();
+        $med_provider->save();
     }
 
 /**
@@ -100,20 +100,20 @@ class AuthController extends Controller
         $email = $request->email;
         $password = $request->password;
 
-        $provider = User::where('email', $email)->first();
+        $med_provider = User::where('email', $email)->first();
 
-        if (!$provider) {
+        if (!$med_provider) {
             return response()->json($invalidCredentialsResponse, 401);
         }
 
-        if (!Hash::check($password, $provider->password)) {
+        if (!Hash::check($password, $med_provider->password)) {
             return response()->json($invalidCredentialsResponse, 401);
         }
 
-        $token = $provider->createToken('Provider Token');
+        $token = $med_provider->createToken('med_provider Token');
 
         $data = [
-            'provider' => $provider,
+            'med_provider' => $med_provider,
             'token' => $token->accessToken,
             'token_type' => 'Bearer',
             'token_expires' => Carbon::parse(

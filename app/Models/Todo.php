@@ -21,11 +21,17 @@ class Todo extends Model
         'description',
         'completed',
         'status',
-        'user_id',
+        'med_provider_id',
+        'patient_id',
         'due_date',
     ];
 
-    public function user()
+    public function med_provider()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function patient()
     {
         return $this->belongsTo(User::class);
     }

@@ -1,16 +1,28 @@
 <?php
 
-namespace App\Http\Controllers\Patients;
+namespace App\Http\Controllers\Shared;
 
 use App\Http\Controllers\Controller;
 use App\Models\Todo;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Spatie\Permission\Models\Role;
 
 class TodoController extends Controller
 {
+
+    /**
+     * setup middleware
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('verify_patient_id')->only(['create', 'update']);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -20,6 +32,35 @@ class TodoController extends Controller
     {
         $todos = Todo::where('user_id', auth()->user()->id)->latest()->paginate(15);
         return $todos;
+    }
+
+    /**
+     * fetch a patient.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function fetchPatients()
+    {
+        // fetch all patients
+        $patients = Role::where('name', 'patient')->first()->users()->latest()->paginate(15);
+        return response([
+            'status' => true,
+            'data' => $patients,
+        ]);
+    }
+
+    /**
+     * fetch a patient's todos.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function fetchPatientTodos()
+    {
+        $todos = Todo::where('patient_id', auth()->user()->id)->latest()->paginate(15);
+        return response([
+            'status' => true,
+            'data' => $todos,
+        ]);
     }
 
     /**
@@ -62,7 +103,7 @@ class TodoController extends Controller
             'title' => 'required|unique:todos,title|string|max:255',
             'description' => 'required|string|max:255',
             // 'status' => 'required' . Rule::in($status),
-            // 'user_id' => 'required|integer|exists:users,id',
+            'patient_id' => 'required|integer|exists:users,id',
             'due_date' => 'required|date',
             // 'completed' => 'boolean',
         ]);
@@ -81,7 +122,8 @@ class TodoController extends Controller
         $todo->description = $request->description;
         // $todo->completed = $request->completed;
         // $todo->status = "$request->status";
-        $todo->user_id = auth()->user()->id;
+        $todo->provider_id = auth()->user()->id;
+        $todo->patient_id = $request->patient_id;
         $todo->due_date = $request->due_date;
 
         $todo->save();
@@ -145,7 +187,7 @@ class TodoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function updateStatus(Todo $todo)
+    public function completeTodo(Todo $todo)
     {
         $todo->status = 'completed';
         $todo->completed = true;

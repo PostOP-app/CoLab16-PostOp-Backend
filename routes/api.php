@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 |
 | Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
+| routes are loaded by the RouteServicemed_provider within a group which
 | is assigned the "api" middleware group. Enjoy building your API!
 |
  */
@@ -22,23 +22,32 @@ Route::prefix('admin')->group(function () {
     Route::post('/logout', [App\Http\Controllers\Admin\AuthController::class, 'logout']);
 });
 
-Route::prefix('patients')->group(function () {
-    Route::group(['middleware' => ['auth:api', 'role:Patients']], function () {
-        Route::get('/todos', [App\Http\Controllers\Patients\TodoController::class, 'index']);
-        Route::post('/todos/create', [App\Http\Controllers\Patients\TodoController::class, 'create']);
-        Route::put('/todos/{todo}/update', [App\Http\Controllers\Patients\TodoController::class, 'update']);
-        Route::patch('/todos/{todo}/complete', [App\Http\Controllers\Patients\TodoController::class, 'updateStatus']);
-        Route::put('/todos/{todo}/archive', [App\Http\Controllers\Patients\TodoController::class, 'archive']);
-        Route::put('/todos/{slug}/restore', [App\Http\Controllers\Patients\TodoController::class, 'restore']);
-        Route::delete('/todos/{slug}/delete', [App\Http\Controllers\Patients\TodoController::class, 'destroy']);
-
+Route::prefix('patient')->group(function () {
+    Route::group(['middleware' => ['auth:api', 'role:patient']], function () {
+        Route::get('/todos', [App\Http\Controllers\Shared\TodoController::class, 'fetchPatientTodos']);
     });
 });
 
-Route::prefix('providers')->group(function () {
-    // Route::post('/register', [App\Http\Controllers\Providers\AuthController::class, 'register']);
-    Route::post('/login', [App\Http\Controllers\Providers\AuthController::class, 'login']);
+Route::prefix('todos')->group(function () {
+    $roles = ['patient', 'med_provider'];
+    Route::group(['middleware' => ['auth:api', 'role:' . implode('|', $roles)]], function () {
+        Route::patch('/{todo}/complete', [App\Http\Controllers\Shared\TodoController::class, 'completeTodo']);
+        Route::put('/{todo}/archive', [App\Http\Controllers\Shared\TodoController::class, 'archive']);
+        Route::put('/{slug}/restore', [App\Http\Controllers\Shared\TodoController::class, 'restore']);
+        Route::delete('/{slug}/delete', [App\Http\Controllers\Shared\TodoController::class, 'destroy']);
+    });
+});
 
+Route::prefix('med_provider')->group(function () {
+    // Route::post('/register', [App\Http\Controllers\med_provider\AuthController::class, 'register']);
+    Route::post('/login', [App\Http\Controllers\MedProviders\AuthController::class, 'login']);
+
+    Route::group(['middleware' => ['auth:api', 'role:med_provider']], function () {
+        Route::get('/all-patients', [App\Http\Controllers\Shared\TodoController::class, 'fetchPatients']);
+        Route::get('/todos', [App\Http\Controllers\Shared\TodoController::class, 'index']);
+        Route::post('/todos/create', [App\Http\Controllers\Shared\TodoController::class, 'create']);
+        Route::put('/todos/{todo}/update', [App\Http\Controllers\Shared\TodoController::class, 'update']);
+    });
 });
 
 Route::prefix('messages')->group(function () {

@@ -29,9 +29,9 @@ class Message extends Model
     }
 
     /**
-     * Return the provider that sent the message
+     * Return the med_provider that sent the message
      */
-    public function fromProvider()
+    public function frommed_provider()
     {
         return $this->belongsTo(User::class, 'from_id');
     }
@@ -45,9 +45,9 @@ class Message extends Model
     }
 
     /**
-     * Return the provider that received the message
+     * Return the med_provider that received the message
      */
-    public function toProvider()
+    public function tomed_provider()
     {
         return $this->belongsTo(User::class, 'to_id');
     }

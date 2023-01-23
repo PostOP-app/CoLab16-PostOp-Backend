@@ -12,7 +12,7 @@ class MessageController extends Controller
 {
     public function __construct()
     {
-        $roles = ['Patients', 'Providers'];
+        $roles = ['patient', 'med_provider'];
         $this->middleware('role:' . implode('|', $roles));
     }
 
@@ -38,7 +38,7 @@ class MessageController extends Controller
                 'status' => false,
                 'message' => 'User not found',
             ], 400);
-        } else if (auth()->user()->roles[0]->name == 'Patients' && $id == 1) {
+        } else if (auth()->user()->roles[0]->name == 'patient' && $id == 1) {
             return response()->json([
                 'status' => false,
                 'message' => 'You can not send message to admin',
