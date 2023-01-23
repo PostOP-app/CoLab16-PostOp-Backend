@@ -15,10 +15,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [App\Http\Controllers\Patients\AuthController::class, 'register']);
 Route::post('/login', [App\Http\Controllers\Patients\AuthController::class, 'login']);
+Route::post('/logout', [App\Http\Controllers\Patients\AuthController::class, 'logout']);
 
 Route::prefix('admin')->group(function () {
     Route::post('/login', [App\Http\Controllers\Admin\AuthController::class, 'login']);
-
+    Route::post('/logout', [App\Http\Controllers\Admin\AuthController::class, 'logout']);
 });
 
 Route::prefix('patients')->group(function () {
@@ -40,6 +41,13 @@ Route::prefix('providers')->group(function () {
 
 });
 
-Route::group(['middleware' => ['auth:api', 'role:Providers, Patients']], function () {
-
+Route::prefix('messages')->group(function () {
+    Route::group(['middleware' => ['auth:api']], function () {
+        Route::get('/', [App\Http\Controllers\Shared\MessageController::class, 'getAllMessages']);
+        Route::post('{id}/send', [App\Http\Controllers\Shared\MessageController::class, 'sendMessage']);
+        Route::get('{id}/fetch', [App\Http\Controllers\Shared\MessageController::class, 'fetchMessages']);
+        Route::get('unread', [App\Http\Controllers\Shared\MessageController::class, 'getUnreadMessages']);
+        Route::patch('/{id}/mark-as-read', [App\Http\Controllers\Shared\MessageController::class, 'markMessageAsRead']);
+        Route::delete('/{id}/delete', [App\Http\Controllers\Shared\MessageController::class, 'deleteMessage']);
+    });
 });
