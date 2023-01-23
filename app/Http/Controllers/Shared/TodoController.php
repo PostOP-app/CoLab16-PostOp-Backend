@@ -121,7 +121,7 @@ class TodoController extends Controller
         $todo->description = $request->description;
         // $todo->completed = $request->completed;
         // $todo->status = "$request->status";
-        $todo->med_provider_id = auth()->user()->id;
+        $todo->provider_id = auth()->user()->id;
         $todo->patient_id = $request->patient_id;
         $todo->due_date = $request->due_date;
 

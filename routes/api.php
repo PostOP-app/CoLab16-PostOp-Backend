@@ -13,9 +13,9 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
-Route::post('/register', [App\Http\Controllers\patient\AuthController::class, 'register']);
-Route::post('/login', [App\Http\Controllers\patient\AuthController::class, 'login']);
-Route::post('/logout', [App\Http\Controllers\patient\AuthController::class, 'logout']);
+Route::post('/register', [App\Http\Controllers\Patients\AuthController::class, 'register']);
+Route::post('/login', [App\Http\Controllers\Patients\AuthController::class, 'login']);
+Route::post('/logout', [App\Http\Controllers\Patients\AuthController::class, 'logout']);
 
 Route::prefix('admin')->group(function () {
     Route::post('/login', [App\Http\Controllers\Admin\AuthController::class, 'login']);
@@ -40,7 +40,7 @@ Route::prefix('todos')->group(function () {
 
 Route::prefix('med_provider')->group(function () {
     // Route::post('/register', [App\Http\Controllers\med_provider\AuthController::class, 'register']);
-    Route::post('/login', [App\Http\Controllers\med_provider\AuthController::class, 'login']);
+    Route::post('/login', [App\Http\Controllers\MedProviders\AuthController::class, 'login']);
 
     Route::group(['middleware' => ['auth:api', 'role:med_provider']], function () {
         Route::get('/all-patient', [App\Http\Controllers\Shared\TodoController::class, 'fetchPatient']);
