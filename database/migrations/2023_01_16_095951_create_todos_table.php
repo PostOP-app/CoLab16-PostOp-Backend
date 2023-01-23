@@ -20,7 +20,8 @@ return new class extends Migration
             $table->text('description');
             $table->boolean('completed')->default(false);
             $table->string('status')->default('pending');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('provider_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('patient_id')->constrained('users')->onDelete('cascade');
             $table->dateTime('due_date', $precision = 0);
             $table->softDeletes();
             $table->timestamps();
