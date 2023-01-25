@@ -128,4 +128,20 @@ class AuthController extends Controller
         ], 200);
     }
 
+    /**
+     * Process logout action
+     * @param Request $request - Request object
+     * @param User $med_provider - User object
+     * @return Response
+     */
+    public function logout(Request $request)
+    {
+        $request->user()->token()->revoke();
+
+        return response([
+            'status' => true,
+            'message' => 'Logout Successful',
+        ], 200);
+    }
+
 }

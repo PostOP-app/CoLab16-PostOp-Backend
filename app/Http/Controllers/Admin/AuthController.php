@@ -66,4 +66,20 @@ class AuthController extends Controller
             'data' => $data,
         ], 200);
     }
+
+    /**
+     * Process logout action
+     * @param Request $request - Request object
+     *
+     * @return Response
+     */
+    public function logout(Request $request)
+    {
+        $request->user()->token()->revoke();
+
+        return response([
+            'status' => true,
+            'message' => 'Logout Successful',
+        ], 200);
+    }
 }

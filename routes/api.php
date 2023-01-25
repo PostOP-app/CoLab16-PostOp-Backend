@@ -15,16 +15,18 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [App\Http\Controllers\Patients\AuthController::class, 'register']);
 Route::post('/login', [App\Http\Controllers\Patients\AuthController::class, 'login']);
-Route::post('/logout', [App\Http\Controllers\Patients\AuthController::class, 'logout']);
 
 Route::prefix('admin')->group(function () {
     Route::post('/login', [App\Http\Controllers\Admin\AuthController::class, 'login']);
-    Route::post('/logout', [App\Http\Controllers\Admin\AuthController::class, 'logout']);
+    Route::middleware(['auth:api', 'role:admin'])->group(function () {
+        Route::post('/logout', [App\Http\Controllers\Admin\AuthController::class, 'logout']);
+    });
 });
 
 Route::prefix('patient')->group(function () {
     Route::group(['middleware' => ['auth:api', 'role:patient']], function () {
         Route::get('/todos', [App\Http\Controllers\Shared\TodoController::class, 'fetchPatientTodos']);
+        Route::post('/logout', [App\Http\Controllers\Patients\AuthController::class, 'logout']);
     });
 });
 
@@ -47,6 +49,7 @@ Route::prefix('med_provider')->group(function () {
         Route::get('/todos', [App\Http\Controllers\Shared\TodoController::class, 'index']);
         Route::post('/todos/create', [App\Http\Controllers\Shared\TodoController::class, 'create']);
         Route::put('/todos/{todo}/update', [App\Http\Controllers\Shared\TodoController::class, 'update']);
+        Route::post('/logout', [App\Http\Controllers\MedProviders\AuthController::class, 'logout']);
     });
 });
 
