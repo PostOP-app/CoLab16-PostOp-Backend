@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Shared;
 
 use App\Http\Controllers\Controller;
+use App\Models\Image;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -60,10 +61,26 @@ class MessageController extends Controller
 
         $message = new Message();
         $this->store($request, $message, $id);
+        if ($request->image) {
+            $image = $request->file('image');
+
+            // convert base64 to image
+            $decodedImage = base64ToFile($image);
+            $decodedImageName = $decodedImage->hashName();
+
+            //Move the image to a specific directory
+            $destinationPath = $decodedImage->storeAs('public/messages/images', $decodedImageName);
+
+            Image::create([
+                'imageable_id' => $message->id,
+                'imageable_type' => 'App\Models\Message',
+                'path' => $destinationPath,
+            ]);
+        }
 
         return response()->json([
             'status' => true,
-            'message' => $message,
+            'message' => "Message sent: " . $message,
         ], 200);
     }
 
@@ -76,6 +93,7 @@ class MessageController extends Controller
         $message->from_id = auth()->user()->id;
         $message->to_id = $id;
         $message->text = $request->text;
+
         $message->save();
     }
 

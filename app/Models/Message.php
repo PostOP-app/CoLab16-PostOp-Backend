@@ -16,7 +16,7 @@ class Message extends Model
      */
     protected $fillable = [
         'message',
-        'photo',
+        'image',
         'read',
     ];
 
@@ -50,5 +50,13 @@ class Message extends Model
     public function tomed_provider()
     {
         return $this->belongsTo(User::class, 'to_id');
+    }
+
+    /**
+     * Return the image associated with the message
+     */
+    public function images()
+    {
+        return $this->morphOne(Image::class, 'imageable');
     }
 }
