@@ -159,6 +159,30 @@ class TodoController extends Controller
             $todo->description = $request->description;
         }
 
+        if ($request->tracker) {
+            $request->validate([
+                'tracker' => 'required|string|max:255',
+            ]);
+
+            $todo->tracker = $request->tracker;
+        }
+
+        if ($request->frequency) {
+            $request->validate([
+                'frequency' => 'required|string|max:255',
+            ]);
+
+            $todo->frequency = $request->frequency;
+        }
+
+        if ($request->times) {
+            $request->validate([
+                'times' => 'required|date',
+            ]);
+
+            $todo->times = $request->times;
+        }
+
         if ($request->due_date) {
             $request->validate([
                 'due_date' => 'required|date',
