@@ -33,6 +33,7 @@ Route::prefix('patient')->group(function () {
 Route::prefix('todos')->group(function () {
     $roles = ['patient', 'med_provider'];
     Route::group(['middleware' => ['auth:api', 'role:' . implode('|', $roles)]], function () {
+        Route::get('/{todo}', [App\Http\Controllers\Shared\TodoController::class, 'fetchTodo']);
         Route::patch('/{todo}/complete', [App\Http\Controllers\Shared\TodoController::class, 'completeTodo']);
         Route::put('/{todo}/archive', [App\Http\Controllers\Shared\TodoController::class, 'archive']);
         Route::put('/{slug}/restore', [App\Http\Controllers\Shared\TodoController::class, 'restore']);
