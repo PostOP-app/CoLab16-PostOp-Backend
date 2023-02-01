@@ -64,6 +64,25 @@ class TodoController extends Controller
     }
 
     /**
+     * fetch a todo.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function fetchTodo(Todo $todo)
+    {
+        if (!$todo) {
+            return response([
+                'status' => false,
+                'message' => 'Todo not found',
+            ], 404);
+        }
+        return response([
+            'status' => true,
+            'data' => $todo,
+        ]);
+    }
+
+    /**
      * Create a new todo.
      *
      * @return \Illuminate\Http\Response
@@ -102,6 +121,9 @@ class TodoController extends Controller
         return Validator::make($request->all(), [
             'title' => 'required|unique:todos,title|string|max:255',
             'description' => 'required|string|max:255',
+            'tracker' => 'required|string|max:255',
+            'frequency' => 'required|string|max:255',
+            'times' => 'required|date',
             // 'status' => 'required' . Rule::in($status),
             'patient_id' => 'required|integer|exists:users,id',
             'due_date' => 'required|date',
@@ -120,6 +142,9 @@ class TodoController extends Controller
         $todo->title = $request->title;
         $todo->slug = Str::slug($request->title . '-' . time());
         $todo->description = $request->description;
+        $todo->tracker = $request->tracker;
+        $todo->frequency = $request->frequency;
+        $todo->times = $request->times;
         // $todo->completed = $request->completed;
         // $todo->status = "$request->status";
         $todo->provider_id = auth()->user()->id;
@@ -137,34 +162,100 @@ class TodoController extends Controller
     public function update(Request $request, Todo $todo)
     {
         if ($request->title) {
-            $request->validate([
+            $validateTitle = Validator::make($request->all(), [
                 'title' => 'required|unique:todos,title|string|max:255',
             ]);
+            if ($validateTitle->fails()) {
+                return response([
+                    'status' => false,
+                    'errors' => $validateTitle->errors()->messages(),
+                ], 400);
+            }
 
             $todo->title = $request->title;
-            $todo->slug = Str::slug($request->title);
+            $todo->slug = Str::slug($request->title) . '-' . time();
         }
 
         if ($request->description) {
-            $request->validate([
+            $validateDesc = Validator::make($request->all(), [
                 'description' => 'required|string|max:255',
             ]);
+            if ($validateDesc->fails()) {
+                return response([
+                    'status' => false,
+                    'errors' => $validateDesc->errors()->messages(),
+                ], 400);
+            }
 
             $todo->description = $request->description;
         }
 
+        if ($request->tracker) {
+            $validateTracker = Validator::make($request->all(), [
+                'tracker' => 'required|string|max:255',
+            ]);
+            if ($validateTracker->fails()) {
+                return response([
+                    'status' => false,
+                    'errors' => $validateTracker->errors()->messages(),
+                ], 400);
+            }
+
+            $todo->tracker = $request->tracker;
+        }
+
+        if ($request->frequency) {
+            $validateFreq = Validator::make($request->all(), [
+                'frequency' => 'required|string|max:255',
+            ]);
+            if ($validateFreq->fails()) {
+                return response([
+                    'status' => false,
+                    'errors' => $validateFreq->errors()->messages(),
+                ], 400);
+            }
+
+            $todo->frequency = $request->frequency;
+        }
+
+        if ($request->times) {
+            $validateTimes = Validator::make($request->all(), [
+                'times' => 'required|date',
+            ]);
+            if ($validateTimes->fails()) {
+                return response([
+                    'status' => false,
+                    'errors' => $validateTimes->errors()->messages(),
+                ], 400);
+            }
+
+            $todo->times = $request->times;
+        }
+
         if ($request->due_date) {
-            $request->validate([
+            $validateDD = Validator::make($request->all(), [
                 'due_date' => 'required|date',
             ]);
+            if ($validateDD->fails()) {
+                return response([
+                    'status' => false,
+                    'errors' => $validateDD->errors()->messages(),
+                ], 400);
+            }
 
             $todo->due_date = $request->due_date;
         }
 
         if ($request->status) {
-            $request->validate([
+            $validateStatus = Validator::make($request->all(), [
                 'status' => 'required|string|max:255',
             ]);
+            if ($validateStatus->fails()) {
+                return response([
+                    'status' => false,
+                    'errors' => $validateStatus->errors()->messages(),
+                ], 400);
+            }
 
             $todo->status = $request->status;
 
@@ -174,11 +265,13 @@ class TodoController extends Controller
         }
 
         $todo->save();
+        // fetch updated todo
+        $updatedTodo = Todo::find($todo->id);
 
         return response([
             'status' => true,
             'message' => 'Todo updated successfully',
-            'data' => $todo,
+            'data' => $updatedTodo,
         ], 200);
     }
 
