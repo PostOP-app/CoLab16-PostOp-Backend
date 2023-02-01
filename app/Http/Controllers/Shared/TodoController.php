@@ -102,6 +102,9 @@ class TodoController extends Controller
         return Validator::make($request->all(), [
             'title' => 'required|unique:todos,title|string|max:255',
             'description' => 'required|string|max:255',
+            'tracker' => 'required|string|max:255',
+            'frequency' => 'required|string|max:255',
+            'times' => 'required|date',
             // 'status' => 'required' . Rule::in($status),
             'patient_id' => 'required|integer|exists:users,id',
             'due_date' => 'required|date',
@@ -120,6 +123,9 @@ class TodoController extends Controller
         $todo->title = $request->title;
         $todo->slug = Str::slug($request->title . '-' . time());
         $todo->description = $request->description;
+        $todo->tracker = $request->tracker;
+        $todo->frequency = $request->frequency;
+        $todo->times = $request->times;
         // $todo->completed = $request->completed;
         // $todo->status = "$request->status";
         $todo->provider_id = auth()->user()->id;
