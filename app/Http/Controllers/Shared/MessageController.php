@@ -22,7 +22,7 @@ class MessageController extends Controller
         // $unreadMsgs = Message::select(DB::raw('`from_id` as sender_id, count(`from_id`) as messages_count'))->where('to_id', $id)->where('read', false)->groupBy('from_id')->get();
 
         Message::where('from_id', $id)->where('to_id', auth()->user()->id)->update(['read' => true]);
-        $messages = Message::where('from_id', auth()->user()->id)->orwhere('to_id', $id)->get();
+        $messages = Message::where('from_id', auth()->user()->id)->orwhere('to_id', $id)->with('images')->get();
 
         return response()->json([
             'status' => true,
@@ -71,6 +71,10 @@ class MessageController extends Controller
             //Move the image to a specific directory
             $destinationPath = $decodedImage->storeAs('public/messages/images', $decodedImageName);
 
+            $message->from_id = auth()->user()->id;
+            $message->to_id = $id;
+            $message->image = $destinationPath;
+            $message->save();
             Image::create([
                 'imageable_id' => $message->id,
                 'imageable_type' => 'App\Models\Message',
@@ -80,7 +84,7 @@ class MessageController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => "Message sent: " . $message,
+            'message' => $message,
         ], 200);
     }
 
