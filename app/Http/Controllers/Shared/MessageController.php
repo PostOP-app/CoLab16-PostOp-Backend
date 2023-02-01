@@ -62,7 +62,7 @@ class MessageController extends Controller
         $message = new Message();
         $this->store($request, $message, $id);
         if ($request->image) {
-            $image = $request->file('image');
+            $image = $request->image;
 
             // convert base64 to image
             $decodedImage = base64ToFile($image);
