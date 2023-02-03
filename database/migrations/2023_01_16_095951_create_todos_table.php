@@ -18,8 +18,6 @@ return new class extends Migration
             $table->string('title')->unique();
             $table->string('slug')->unique();
             $table->text('description');
-            $table->string('tracker');
-            $table->string('frequency');
             $table->boolean('completed')->default(false);
             $table->string('status')->default('pending');
             $table->foreignId('provider_id')->constrained('users')->onDelete('cascade');

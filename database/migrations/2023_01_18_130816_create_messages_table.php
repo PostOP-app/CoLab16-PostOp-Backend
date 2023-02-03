@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->text('text');
+            $table->text('text')->nullable();
             $table->string('image')->nullable();
             // $table->enum('from', ['patient', 'med_provider']);
             // $table->enum('to', ['med_provider', 'patient']);
