@@ -25,9 +25,14 @@ Route::prefix('admin')->group(function () {
 
 Route::prefix('patient')->group(function () {
     Route::group(['middleware' => ['auth:api', 'role:patient']], function () {
+        // todo routes
         Route::get('/todos', [App\Http\Controllers\Shared\TodoController::class, 'fetchPatientTodos']);
         Route::post('/logout', [App\Http\Controllers\Patients\AuthController::class, 'logout']);
+
+        // recovery plan routes
+        Route::get('/recovery-plans', [App\Http\Controllers\Shared\RecoveryPlanController::class, 'fetchAllRecoveryPlansForPatient']);
     });
+
 });
 
 // shared todo routes
@@ -47,7 +52,7 @@ Route::prefix('todos')->group(function () {
 Route::prefix('recovery-plans')->group(function () {
     $roles = ['patient', 'med_provider'];
     Route::group(['middleware' => ['auth:api', 'role:' . implode('|', $roles)]], function () {
-        Route::get('/', [App\Http\Controllers\Shared\RecoveryPlanController::class, 'fetchRecoveryPlans']);
+        Route::get('/', [App\Http\Controllers\Shared\RecoveryPlanController::class, 'fetchAllRecoveryPlans']);
         Route::get('/{recoveryPlan}', [App\Http\Controllers\Shared\RecoveryPlanController::class, 'fetchRecoveryPlan']);
     });
 });

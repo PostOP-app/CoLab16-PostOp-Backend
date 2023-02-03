@@ -26,7 +26,21 @@ class RecoveryPlanController extends Controller
      * fetch all recovery plans
      * @return \Illuminate\Http\JsonResponse
      */
-    public function fetchRecoveryPlans()
+    public function fetchAllRecoveryPlans()
+    {
+        $recoveryPlans = RecoveryPlan::where('provider_id', auth()->user()->id)->latest()->paginate(15);
+        return response([
+            'status' => true,
+            'data' => $recoveryPlans,
+        ]);
+    }
+
+    /**
+     * fetch all recovery plans for a patient
+     * @param User $patient
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function fetchAllRecoveryPlansForPatient()
     {
         $recoveryPlans = RecoveryPlan::where('patient_id', auth()->user()->id)->latest()->paginate(15);
         return response([
