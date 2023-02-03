@@ -233,7 +233,27 @@ class RecoveryPlanController extends Controller
         ]);
     }
 
-    // public function deleteRecoveryPlan($id)
-    // {
-    //     $recoveryPlan = RecoveryPlan::find($
+    public function deleteRecoveryPlan(RecoveryPlan $recoveryPlan)
+    {
+        if (!$recoveryPlan) {
+            return response([
+                'status' => false,
+                'message' => 'Recovery plan not found',
+            ], 404);
+        }
+
+        if ($recoveryPlan->provider_id !== auth()->user()->id) {
+            return response([
+                'status' => false,
+                'message' => 'You are not authorized to delete this recovery plan',
+            ], 401);
+        }
+
+        $recoveryPlan->delete();
+
+        return response([
+            'status' => true,
+            'message' => 'Recovery plan deleted successfully',
+        ]);
+    }
 }
