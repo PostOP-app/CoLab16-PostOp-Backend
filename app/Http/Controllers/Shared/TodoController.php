@@ -124,10 +124,6 @@ class TodoController extends Controller
         return Validator::make($request->all(), [
             'title' => 'required|unique:todos,title|string|max:255',
             'description' => 'required|string|max:255',
-            'tracker' => 'required|string|max:255',
-            'frequency' => 'required|string|max:255',
-            'times' => 'required|date',
-            // 'status' => 'required' . Rule::in($status),
             'patient_id' => 'required|integer|exists:users,id',
             'due_date' => 'required|date|after_or_equal:today',
             // 'completed' => 'boolean',
@@ -145,11 +141,6 @@ class TodoController extends Controller
         $todo->title = $request->title;
         $todo->slug = Str::slug($request->title . '-' . time());
         $todo->description = $request->description;
-        $todo->tracker = $request->tracker;
-        $todo->frequency = $request->frequency;
-        $todo->times = $request->times;
-        // $todo->completed = $request->completed;
-        // $todo->status = "$request->status";
         $todo->provider_id = auth()->user()->id;
         $todo->patient_id = $request->patient_id;
         $todo->due_date = $request->due_date;
@@ -205,48 +196,6 @@ class TodoController extends Controller
             }
 
             $todo->description = $request->description;
-        }
-
-        if ($request->tracker) {
-            $validateTracker = Validator::make($request->all(), [
-                'tracker' => 'required|string|max:255',
-            ]);
-            if ($validateTracker->fails()) {
-                return response([
-                    'status' => false,
-                    'errors' => $validateTracker->errors()->messages(),
-                ], 400);
-            }
-
-            $todo->tracker = $request->tracker;
-        }
-
-        if ($request->frequency) {
-            $validateFreq = Validator::make($request->all(), [
-                'frequency' => 'required|string|max:255',
-            ]);
-            if ($validateFreq->fails()) {
-                return response([
-                    'status' => false,
-                    'errors' => $validateFreq->errors()->messages(),
-                ], 400);
-            }
-
-            $todo->frequency = $request->frequency;
-        }
-
-        if ($request->times) {
-            $validateTimes = Validator::make($request->all(), [
-                'times' => 'required|date',
-            ]);
-            if ($validateTimes->fails()) {
-                return response([
-                    'status' => false,
-                    'errors' => $validateTimes->errors()->messages(),
-                ], 400);
-            }
-
-            $todo->times = $request->times;
         }
 
         if ($request->due_date) {

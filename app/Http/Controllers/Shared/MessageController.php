@@ -21,7 +21,7 @@ class MessageController extends Controller
     {
         // $unreadMsgs = Message::select(DB::raw('`from_id` as sender_id, count(`from_id`) as messages_count'))->where('to_id', $id)->where('read', false)->groupBy('from_id')->get();
 
-        Message::where('from_id', $id)->where('to_id', auth()->user()->id)->update(['read' => true]);
+        // Message::where('from_id', $id)->where('to_id', auth()->user()->id)->update(['read' => true]);
         $messages = Message::where('from_id', auth()->user()->id)->orwhere('to_id', $id)->with('images')->get();
 
         return response()->json([
@@ -51,17 +51,26 @@ class MessageController extends Controller
             ], 400);
         }
 
-        $validate = $this->validator($request);
-        if ($validate->fails()) {
+        $message = new Message();
+        if (!$request->text && !$request->image) {
             return response()->json([
                 'status' => false,
-                'errors' => $validate->errors()->messages(),
+                'message' => 'Message can not be empty',
             ], 400);
         }
 
-        $message = new Message();
-        $this->store($request, $message, $id);
-        if ($request->image) {
+        if ($request->text) {
+            $validate = $this->validator($request);
+            if ($validate->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'errors' => $validate->errors()->messages(),
+                ], 400);
+            }
+            $this->store($request, $message, $id);
+        }
+
+        if ($request->has('image')) {
             $image = $request->image;
 
             // convert base64 to image
@@ -110,7 +119,7 @@ class MessageController extends Controller
     {
         return Validator::make($request->all(), [
             // 'to_id' => 'required|integer,exists:users,id',
-            'text' => 'required|string',
+            'text' => 'string',
         ]);
     }
 
