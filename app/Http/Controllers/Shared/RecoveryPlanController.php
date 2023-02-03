@@ -141,8 +141,10 @@ class RecoveryPlanController extends Controller
         $recoveryPlan->save();
     }
 
-    public function updateRecoveryPlan(Request $request, RecoveryPlan $recoveryPlan)
+    public function updateRecoveryPlan(Request $request, $slug)
     {
+        // check if recovery plan exists
+        $recoveryPlan = RecoveryPlan::where('slug', $slug)->first();
         if (!$recoveryPlan) {
             return response([
                 'status' => false,
@@ -170,6 +172,7 @@ class RecoveryPlanController extends Controller
             }
 
             $recoveryPlan->tracker = $request->tracker;
+            $recoveryPlan->slug = Str::slug($request->tracker) . '-' . time();
         }
 
         if ($request->details) {
@@ -255,8 +258,9 @@ class RecoveryPlanController extends Controller
         ]);
     }
 
-    public function deleteRecoveryPlan(RecoveryPlan $recoveryPlan)
+    public function deleteRecoveryPlan($slug)
     {
+        $recoveryPlan = RecoveryPlan::where('slug', $slug)->first();
         if (!$recoveryPlan) {
             return response([
                 'status' => false,

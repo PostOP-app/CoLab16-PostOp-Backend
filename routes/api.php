@@ -77,8 +77,8 @@ Route::group(['middleware' => ['auth:api', 'role:med_provider']], function () {
     // private recovery plan routes
     Route::prefix('med_provider/recovery-plans')->group(function () {
         Route::post('/create', [App\Http\Controllers\Shared\RecoveryPlanController::class, 'createRecoveryPlan']);
-        Route::put('/{recoveryPlan}/update', [App\Http\Controllers\Shared\RecoveryPlanController::class, 'updateRecoveryPlan']);
-        Route::delete('/{recoveryPlan}/delete', [App\Http\Controllers\Shared\RecoveryPlanController::class, 'deleteRecoveryPlan']);
+        Route::put('/{slug}/update', [App\Http\Controllers\Shared\RecoveryPlanController::class, 'updateRecoveryPlan']);
+        Route::delete('/{slug}/delete', [App\Http\Controllers\Shared\RecoveryPlanController::class, 'deleteRecoveryPlan']);
     });
 });
 
