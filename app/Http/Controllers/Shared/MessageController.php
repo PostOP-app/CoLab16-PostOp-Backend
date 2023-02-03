@@ -68,7 +68,9 @@ class MessageController extends Controller
                 ], 400);
             }
             $this->store($request, $message, $id);
-        } elseif ($request->has('image')) {
+        }
+
+        if ($request->has('image')) {
             $image = $request->image;
 
             // convert base64 to image
