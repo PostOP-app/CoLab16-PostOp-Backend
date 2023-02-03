@@ -20,7 +20,6 @@ return new class extends Migration
             $table->text('description');
             $table->string('tracker');
             $table->string('frequency');
-            $table->dateTime('times', $precision = 0);
             $table->boolean('completed')->default(false);
             $table->string('status')->default('pending');
             $table->foreignId('provider_id')->constrained('users')->onDelete('cascade');
