@@ -13,19 +13,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('todos', function (Blueprint $table) {
+        Schema::create('recovery_plans', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->unique();
-            $table->string('slug')->unique();
-            $table->text('description');
             $table->string('tracker');
+            $table->string('slug')->unique();
+            $table->text('details');
             $table->string('frequency');
-            $table->boolean('completed')->default(false);
-            $table->string('status')->default('pending');
+            $table->time('times', $precision = 0);
+            $table->dateTime('start_date', $precision = 0);
+            $table->dateTime('end_date', $precision = 0);
             $table->foreignId('provider_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('patient_id')->constrained('users')->onDelete('cascade');
-            $table->dateTime('due_date', $precision = 0);
-            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -37,6 +35,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('todos');
+        Schema::dropIfExists('recovery_plans');
     }
 };

@@ -31,7 +31,10 @@ class TodoController extends Controller
     public function index()
     {
         $todos = Todo::where('user_id', auth()->user()->id)->latest()->paginate(15);
-        return $todos;
+        return response([
+            'status' => true,
+            'data' => $todos,
+        ]);
     }
 
     /**
@@ -126,7 +129,7 @@ class TodoController extends Controller
             'times' => 'required|date',
             // 'status' => 'required' . Rule::in($status),
             'patient_id' => 'required|integer|exists:users,id',
-            'due_date' => 'required|date',
+            'due_date' => 'required|date|after_or_equal:today',
             // 'completed' => 'boolean',
         ]);
     }
@@ -161,6 +164,20 @@ class TodoController extends Controller
      */
     public function update(Request $request, Todo $todo)
     {
+        if (!$todo) {
+            return response([
+                'status' => false,
+                'message' => 'Todo not found',
+            ], 404);
+        }
+
+        if ($todo->provider_id != auth()->user()->id) {
+            return response([
+                'status' => false,
+                'message' => 'You are not authorized to update this todo',
+            ], 401);
+        }
+
         if ($request->title) {
             $validateTitle = Validator::make($request->all(), [
                 'title' => 'required|unique:todos,title|string|max:255',
