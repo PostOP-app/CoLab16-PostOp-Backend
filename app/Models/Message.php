@@ -16,7 +16,7 @@ class Message extends Model
      */
     protected $fillable = [
         'message',
-        'photo',
+        'image',
         'read',
     ];
 
@@ -31,7 +31,7 @@ class Message extends Model
     /**
      * Return the med_provider that sent the message
      */
-    public function frommed_provider()
+    public function fromMed_provider()
     {
         return $this->belongsTo(User::class, 'from_id');
     }
@@ -47,8 +47,16 @@ class Message extends Model
     /**
      * Return the med_provider that received the message
      */
-    public function tomed_provider()
+    public function toMed_provider()
     {
         return $this->belongsTo(User::class, 'to_id');
+    }
+
+    /**
+     * Return the image associated with the message
+     */
+    public function images()
+    {
+        return $this->morphOne(Image::class, 'imageable');
     }
 }
