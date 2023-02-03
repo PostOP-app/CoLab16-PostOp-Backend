@@ -31,7 +31,10 @@ class TodoController extends Controller
     public function index()
     {
         $todos = Todo::where('user_id', auth()->user()->id)->latest()->paginate(15);
-        return $todos;
+        return response([
+            'status' => true,
+            'data' => $todos,
+        ]);
     }
 
     /**
@@ -126,7 +129,7 @@ class TodoController extends Controller
             'times' => 'required|date',
             // 'status' => 'required' . Rule::in($status),
             'patient_id' => 'required|integer|exists:users,id',
-            'due_date' => 'required|date',
+            'due_date' => 'required|date|after_or_equal:today',
             // 'completed' => 'boolean',
         ]);
     }
