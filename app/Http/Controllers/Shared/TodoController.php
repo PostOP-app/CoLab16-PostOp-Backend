@@ -164,6 +164,20 @@ class TodoController extends Controller
      */
     public function update(Request $request, Todo $todo)
     {
+        if (!$todo) {
+            return response([
+                'status' => false,
+                'message' => 'Todo not found',
+            ], 404);
+        }
+
+        if ($todo->provider_id != auth()->user()->id) {
+            return response([
+                'status' => false,
+                'message' => 'You are not authorized to update this todo',
+            ], 401);
+        }
+
         if ($request->title) {
             $validateTitle = Validator::make($request->all(), [
                 'title' => 'required|unique:todos,title|string|max:255',
