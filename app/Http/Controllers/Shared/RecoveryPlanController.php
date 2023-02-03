@@ -92,7 +92,7 @@ class RecoveryPlanController extends Controller
             'tracker' => 'required|string|max:101',
             'details' => 'required|string|max:255',
             'frequency' => 'required|string|max:50',
-            'times' => 'required|date_format:H:i',
+            'times*' => 'required|date_format:H:i|precision:0',
             'start_date' => 'required|date|before_or_equal:end_date',
             'end_date' => 'required|date|after_or_equal:start_date',
         ]);

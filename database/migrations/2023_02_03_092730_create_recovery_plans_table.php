@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('details');
             $table->string('frequency');
-            $table->time('times', $precision = 0);
+            $table->array('times');
             $table->dateTime('start_date', $precision = 0);
             $table->dateTime('end_date', $precision = 0);
             $table->foreignId('provider_id')->constrained('users')->onDelete('cascade');
