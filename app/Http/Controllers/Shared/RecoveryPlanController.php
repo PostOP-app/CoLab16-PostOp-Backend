@@ -62,7 +62,7 @@ class RecoveryPlanController extends Controller
      */
     public function createRecoveryPlan(Request $request)
     {
-        $validate = $this->validator($request);
+        $validate = $this->validateRecoveryPlanData($request);
         if ($validate->fails()) {
             return response()->json([
                 'status' => false,
@@ -85,14 +85,14 @@ class RecoveryPlanController extends Controller
      * @param Request $request
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    public function validator(Request $request)
+    public function validateRecoveryPlanData(Request $request)
     {
         return Validator::make($request->all(), [
             'patient_id' => 'required|exists:users,id',
             'tracker' => 'required|string|max:101',
             'details' => 'required|string|max:255',
             'frequency' => 'required|string|max:50',
-            'times*' => 'required|date_format:H:i|precision:0',
+            'times' => 'required|date_format:H:i',
             'start_date' => 'required|date|before_or_equal:end_date',
             'end_date' => 'required|date|after_or_equal:start_date',
         ]);
@@ -113,6 +113,14 @@ class RecoveryPlanController extends Controller
         $recoveryPlan->details = $request->details;
         $recoveryPlan->frequency = $request->frequency;
         $recoveryPlan->times = $request->times;
+        // // store array of times
+        // $times = [];
+        // foreach ($request->times as $key => $time) {
+        //     array_push($times, [
+        //         $recoveryPlan->times => $time,
+        //     ]);
+        //     dd($recoveryPlan->times, $times);
+        // }
         $recoveryPlan->start_date = $request->start_date;
         $recoveryPlan->end_date = $request->end_date;
 

@@ -30,7 +30,7 @@ Route::prefix('patient')->group(function () {
     });
 });
 
-// todo routes
+// shared todo routes
 Route::prefix('todos')->group(function () {
     $roles = ['patient', 'med_provider'];
     Route::group(['middleware' => ['auth:api', 'role:' . implode('|', $roles)]], function () {
@@ -43,7 +43,7 @@ Route::prefix('todos')->group(function () {
     });
 });
 
-// recovery plan routes
+// shared recovery plan routes
 Route::prefix('recovery-plans')->group(function () {
     $roles = ['patient', 'med_provider'];
     Route::group(['middleware' => ['auth:api', 'role:' . implode('|', $roles)]], function () {
@@ -52,30 +52,28 @@ Route::prefix('recovery-plans')->group(function () {
     });
 });
 
-Route::prefix('med_provider')->group(function () {
-    // Route::post('/register', [App\Http\Controllers\med_provider\AuthController::class, 'register']);
-    Route::post('/login', [App\Http\Controllers\MedProviders\AuthController::class, 'login']);
+// Route::post('/register', [App\Http\Controllers\med_provider\AuthController::class, 'register']);
+Route::post('med_provider/login', [App\Http\Controllers\MedProviders\AuthController::class, 'login']);
 
-    Route::group(['middleware' => ['auth:api', 'role:med_provider']], function () {
-        // patients routes
-        Route::get('/all-patients', [App\Http\Controllers\Shared\TodoController::class, 'fetchPatients']);
+Route::group(['middleware' => ['auth:api', 'role:med_provider']], function () {
+    // patients routes
+    Route::get('/all-patients', [App\Http\Controllers\Shared\TodoController::class, 'fetchPatients']);
 
-        // todo routes
-        Route::prefix('todos')->group(function () {
-            Route::get('/', [App\Http\Controllers\Shared\TodoController::class, 'index']);
-            Route::post('/create', [App\Http\Controllers\Shared\TodoController::class, 'create']);
-            Route::put('/{todo}/update', [App\Http\Controllers\Shared\TodoController::class, 'update']);
-        });
+    // private todo routes
+    Route::prefix('med_provider/todos')->group(function () {
+        Route::get('/', [App\Http\Controllers\Shared\TodoController::class, 'index']);
+        Route::post('/create', [App\Http\Controllers\Shared\TodoController::class, 'create']);
+        Route::put('/{todo}/update', [App\Http\Controllers\Shared\TodoController::class, 'update']);
+    });
 
-        // logout route
-        Route::post('/logout', [App\Http\Controllers\MedProviders\AuthController::class, 'logout']);
+    // logout route
+    Route::post('med_provider/logout', [App\Http\Controllers\MedProviders\AuthController::class, 'logout']);
 
-        // recovery plan routes
-        Route::prefix('recovery-plans', function () {
-            Route::post('/create', [App\Http\Controllers\Shared\RecoveryPlanController::class, 'createRecoveryPlan']);
-            Route::put('/{recoveryPlan}/update', [App\Http\Controllers\Shared\RecoveryPlanController::class, 'updateRecoveryPlan']);
-            Route::delete('/{recoveryPlan}/delete', [App\Http\Controllers\Shared\RecoveryPlanController::class, 'deleteRecoveryPlan']);
-        });
+    // private recovery plan routes
+    Route::prefix('med_provider/recovery-plans')->group(function () {
+        Route::post('/create', [App\Http\Controllers\Shared\RecoveryPlanController::class, 'createRecoveryPlan']);
+        Route::put('/{recoveryPlan}/update', [App\Http\Controllers\Shared\RecoveryPlanController::class, 'updateRecoveryPlan']);
+        Route::delete('/{recoveryPlan}/delete', [App\Http\Controllers\Shared\RecoveryPlanController::class, 'deleteRecoveryPlan']);
     });
 });
 
