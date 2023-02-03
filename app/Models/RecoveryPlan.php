@@ -25,4 +25,19 @@ class RecoveryPlan extends Model
         'med_provider_id',
         'patient_id',
     ];
+
+    public function med_provider()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function patient()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 }
