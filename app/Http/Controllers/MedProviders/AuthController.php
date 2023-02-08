@@ -5,6 +5,7 @@ namespace App\Http\Controllers\MedProviders;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Carbon\Carbon;
+use GetStream\StreamChat\Client as StreamChatClient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -111,6 +112,8 @@ class AuthController extends Controller
         }
 
         $token = $med_provider->createToken('med_provider Token');
+        $streamServerClient = new StreamChatClient(env('STREAM_API_KEY'), env('STREAM_API_SECRET'));
+        $streamToken = $streamServerClient->createToken($med_provider->first_name . '-' . time());
 
         $data = [
             'med_provider' => $med_provider,
@@ -119,6 +122,7 @@ class AuthController extends Controller
             'token_expires' => Carbon::parse(
                 $token->token->expires_at
             )->toDateTimeString(),
+            'stream_token' => $streamToken,
         ];
 
         return response([
