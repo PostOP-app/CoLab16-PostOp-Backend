@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Image;
 use App\Models\Message;
 use App\Models\User;
+use GetStream\StreamChat\Client as StreamChatClient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -59,6 +60,17 @@ class MessageController extends Controller
             ], 400);
         }
 
+        $streamClient = new StreamChatClient(env('STREAM_API_KEY'), env('STREAM_API_SECRET'));
+        // $streamClient->upsertUsers([[
+        //     'id' => auth()->user()->id,
+        //     'name' => auth()->user()->first_name . ' ' . auth()->user()->last_name,
+        //     'role' => auth()->user()->roles[0]->name,
+        // ], [
+        //     'id' => $id,
+        //     'name' => $user->first_name . ' ' . $user->last_name,
+        //     'role' => $user->roles[0]->name,
+        // ]]);
+
         if ($request->text) {
             $validate = $this->validator($request);
             if ($validate->fails()) {
@@ -94,6 +106,7 @@ class MessageController extends Controller
         return response()->json([
             'status' => true,
             'message' => $message,
+            'streamClient' => $streamClient,
         ], 200);
     }
 

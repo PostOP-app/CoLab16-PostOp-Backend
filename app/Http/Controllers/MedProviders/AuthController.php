@@ -113,7 +113,7 @@ class AuthController extends Controller
 
         $token = $med_provider->createToken('med_provider Token');
         $streamServerClient = new StreamChatClient(env('STREAM_API_KEY'), env('STREAM_API_SECRET'));
-        $streamToken = $streamServerClient->createToken($med_provider->first_name . '-' . time());
+        $streamToken = $streamServerClient->createToken($med_provider->first_name . '-' . $med_provider->id);
 
         $data = [
             'med_provider' => $med_provider,
