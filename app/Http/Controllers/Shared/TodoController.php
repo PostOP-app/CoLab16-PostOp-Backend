@@ -30,7 +30,7 @@ class TodoController extends Controller
      */
     public function index()
     {
-        $todos = Todo::where('user_id', auth()->user()->id)->latest()->paginate(15);
+        $todos = Todo::where('provider_id', auth()->user()->id)->latest()->paginate(15);
         return response([
             'status' => true,
             'data' => $todos,
