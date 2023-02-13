@@ -59,7 +59,8 @@ class TodoController extends Controller
      */
     public function fetchPatientTodos()
     {
-        $todos = Todo::where('patient_id', auth()->user()->id)->latest()->paginate(15);
+        $todos = Todo::where('patient_id', auth()->user()->id)->orderBy('due_date', 'asc')
+            ->paginate(15);
         return response([
             'status' => true,
             'data' => $todos,
