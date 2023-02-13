@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Shared;
 
 use App\Http\Controllers\Controller;
 use App\Models\RecoveryPlan;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -29,6 +30,10 @@ class RecoveryPlanController extends Controller
     public function fetchAllRecoveryPlans()
     {
         $recoveryPlans = RecoveryPlan::where('provider_id', auth()->user()->id)->latest()->paginate(15);
+        // explode details
+        foreach ($recoveryPlans as $recoveryPlan) {
+            $recoveryPlan->details = explode(',', $recoveryPlan->details);
+        }
         return response([
             'status' => true,
             'data' => $recoveryPlans,
@@ -104,7 +109,7 @@ class RecoveryPlanController extends Controller
         return Validator::make($request->all(), [
             'patient_id' => 'required|exists:users,id',
             'tracker' => 'required|string|max:101',
-            'details' => 'required|string|max:255',
+            'details*' => 'required|array|max:255',
             'frequency' => 'required|string|max:50',
             'times' => 'required|date_format:H:i',
             'start_date' => 'required|date|before_or_equal:end_date',
@@ -124,17 +129,10 @@ class RecoveryPlanController extends Controller
         $recoveryPlan->patient_id = $request->patient_id;
         $recoveryPlan->tracker = $request->tracker;
         $recoveryPlan->slug = Str::slug($request->tracker) . '-' . time();
-        $recoveryPlan->details = $request->details;
+        $detailsString = implode(',', $request->details);
+        $recoveryPlan->details = $detailsString;
         $recoveryPlan->frequency = $request->frequency;
         $recoveryPlan->times = $request->times;
-        // // store array of times
-        // $times = [];
-        // foreach ($request->times as $key => $time) {
-        //     array_push($times, [
-        //         $recoveryPlan->times => $time,
-        //     ]);
-        //     dd($recoveryPlan->times, $times);
-        // }
         $recoveryPlan->start_date = $request->start_date;
         $recoveryPlan->end_date = $request->end_date;
 
@@ -152,7 +150,10 @@ class RecoveryPlanController extends Controller
             ], 404);
         }
 
-        if ($recoveryPlan->provider_id !== auth()->user()->id) {
+        // check if user is authorized to update recovery plan
+        $medProvider = User::where('id', $recoveryPlan->provider_id)->first();
+
+        if ($medProvider->email !== auth()->user()->email) {
             return response([
                 'status' => false,
                 'message' => 'You are not authorized to update this recovery plan',
