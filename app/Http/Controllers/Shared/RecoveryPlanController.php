@@ -178,7 +178,7 @@ class RecoveryPlanController extends Controller
 
         if ($request->details) {
             $validateDetails = Validator::make($request->all(), [
-                'details' => 'string|max:255',
+                'details*' => 'array|max:255',
             ]);
 
             if ($validateDetails->fails()) {
@@ -188,7 +188,8 @@ class RecoveryPlanController extends Controller
                 ], 400);
             }
 
-            $recoveryPlan->details = $request->details;
+            $detailsString = implode(',', $request->details);
+            $recoveryPlan->details = $detailsString;
         }
 
         if ($request->frequency) {
